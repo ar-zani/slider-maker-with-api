@@ -18,10 +18,10 @@ const KEY = '15674931-a9d714b6e9d654524df198e00&q';
 const showImages = (images) => {
   imagesArea.style.display = 'block';
   gallery.innerHTML = '';
-  if(images.length === 0){
+  if (images.length === 0) {
     gallery.innerHTML = `<div class="p-4 mx-auto text-center"><h4 class="text-danger mb-4">SORRY!!! Your searched images "<span class="text-dark">${document.getElementById('search').value}</span>" did not match with any of our images</h4>
     <h5 class="text-success">Search again with another one...</h5></div>`
-    galleryHeader.style.display='none';
+    galleryHeader.style.display = 'none';
     toggleSpinner();
     return;
   }
@@ -39,23 +39,25 @@ const showImages = (images) => {
 
 const getImages = (query) => {
   toggleSpinner();
-  fetch(`https://pixabay.com/api/?key=${KEY}=${query}&image_type=photo&pretty=true`)
-    .then(response => response.json())
-    .then(data => showImages(data.hits))
-    .catch(err => gallery.innerHTML = `<h4 class="text-danger p-4 mx-auto mt-4">Something went wrong! Please try again later.</h4>`)
+  setTimeout(() => {
+    fetch(`https://pixabay.com/api/?key=${KEY}=${query}&image_type=photo&pretty=true`)
+      .then(response => response.json())
+      .then(data => showImages(data.hits))
+      .catch(err => gallery.innerHTML = `<h4 class="text-danger p-4 mx-auto mt-4">Something went wrong! Please try again later.</h4>`)
+  }, 1000);
 }
 
 let slideIndex = 0;
 const selectItem = (event, img) => {
   let element = event.target;
-  
+
   let item = sliders.indexOf(img);
   if (item === -1) {
     sliders.push(img);
     element.classList.add('added');
   } else {
     // alert('Hey, Already added !')
-    sliders.splice(item,1);
+    sliders.splice(item, 1);
     element.classList.remove('added');
   }
 }
@@ -134,9 +136,9 @@ searchBtn.addEventListener('click', function () {
 enterButton(document.getElementById('search'), searchBtn);
 enterButton(document.getElementById('duration'), sliderBtn);
 
-function enterButton(input, goButton){
-  input.addEventListener("keyup", event =>{
-    if(event.key === "Enter"){
+function enterButton(input, goButton) {
+  input.addEventListener("keyup", event => {
+    if (event.key === "Enter") {
       event.preventDefault();
       goButton.click();
     }
@@ -148,4 +150,19 @@ sliderBtn.addEventListener('click', function () {
 })
 const toggleSpinner = () => {
   spinner.classList.toggle('d-none');
+  document.getElementsByClassName('images')[0].classList.toggle('d-none');
+
+}
+function showError() {
+  const time = document.getElementById('duration');
+  if (time.value < 0) {
+    time.style.boxShadow = "inset 0 0 0 2px red";
+    time.value = Math.abs(time.value);
+    setTimeout(() => {
+      alert("Can't enter a negative duration");
+    }, 10);
+  }
+  else {
+    time.style.boxShadow = "none";
+  }
 }
